@@ -2,26 +2,10 @@
 <html>
 <head>
   <head>
-    <script>
-      function toggleFullScreen() {
-        console.error("toggleFullScreen is");
-        var img = document.getElementById('fullscreenImage');
-        if (img) {
-          if (!document.fullscreenElement) {
-            img.requestFullscreen();
-          } else {
-            document.exitFullscreen();
-          }
-        } else {
-          console.error("Element 'fullscreenImage' not found!");
-        }
-      }
-    </script>
   </head>
   <body>
     <script src="main.dart.js" type="application/javascript"></script>
   </body>
-  <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">

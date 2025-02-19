@@ -5,8 +5,8 @@ import 'dart:html' as html;
 
 import 'package:get/get.dart';
 
-import '../../constants/strings_constants.dart';
-import '../../constants/color.dart';
+import '../constants/strings_constants.dart';
+import '../constants/color.dart';
 import 'full_screen.dart';
 
 class HomePage extends StatefulWidget {

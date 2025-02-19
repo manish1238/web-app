@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'view/screens/home_page.dart';
+import 'screens/home_page.dart';
 import 'constants/strings_constants.dart';
 
 void main() {

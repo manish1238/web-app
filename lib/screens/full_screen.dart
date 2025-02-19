@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'dart:html' as html;
 
 import 'home_page.dart';
-import '../../constants/color.dart';
-import '../../constants/strings_constants.dart';
+import '../constants/color.dart';
+import '../constants/strings_constants.dart';
 
 /// Full-Screen Image Widget
 class FullScreenImage extends StatefulWidget {
