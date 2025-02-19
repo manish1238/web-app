@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'view/screens/home_page.dart';
 import 'constants/strings_constants.dart';
@@ -17,9 +18,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return const GetMaterialApp(
       title: AppStringConstants.appTitle,
       debugShowCheckedModeBanner: false,
+      initialRoute: "/",
       home: HomePage(),
     );
   }

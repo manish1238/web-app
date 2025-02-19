@@ -1,8 +1,9 @@
-import 'dart:developer';
-
-import 'dart:html' as html;
+// ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'dart:html' as html;
+
+import 'package:get/get.dart';
 
 import '../../constants/strings_constants.dart';
 import '../../constants/color.dart';
@@ -16,33 +17,37 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  TextEditingController controller = TextEditingController();
-  bool buttonDisabled = true;
-  bool showImage = false;
-  bool isMenuOpen = false;
+  final TextEditingController _controller = TextEditingController();
+  bool _buttonDisabled = true;
+  bool _showImage = false;
+  bool _isMenuOpen = false;
 
-  void enterFullScreen() {
-    html.document.documentElement?.requestFullscreen();
-    setState(() {
-      isMenuOpen = false; // Close menu
-    });
-  }
+  /// Enters full-screen mode and closes the menu.
 
-  void exitFullScreen() {
+  /// Exits full-screen mode and closes the menu.
+  void _exitFullScreen() {
     html.document.exitFullscreen();
+    setState(() => _isMenuOpen = false);
+  }
+
+  /// Displays the image in full-screen mode.
+  void _showFullScreenImage(BuildContext context, String imageUrl) {
+    Get.to(() => FullScreenImage(imageUrl: imageUrl));
+  }
+
+  /// Updates the button state based on the text field input.
+  void _onTextChanged(String value) {
     setState(() {
-      isMenuOpen = false; // Close menu
+      _buttonDisabled = value.isEmpty;
+      if (!_buttonDisabled) _showImage = false;
     });
   }
 
-  /// Function to show image in full screen
-  void showFullScreenImage(BuildContext context, String imageUrl) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => FullScreenImage(imageUrl: imageUrl),
-      ),
-    );
+  /// Handles the image display when the button is pressed.
+  void _onImageButtonPressed() {
+    setState(() {
+      _showImage = true;
+    });
   }
 
   @override
@@ -50,7 +55,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -62,27 +67,19 @@ class _HomePageState extends State<HomePage> {
                     color: grey,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: !showImage
-                      ? Container(height: 100, width: 100, color: red)
-                      : controller.text.isEmpty
-                          ? const SizedBox.shrink()
-                          : GestureDetector(
-                              onDoubleTap: () {
-                                if (controller.text.isNotEmpty) {
-                                  showFullScreenImage(context, controller.text);
-                                }
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  controller.text,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Center(child: Text(AppStringConstants.appName));
-                                  },
-                                ),
-                              ),
+                  child: _showImage && _controller.text.isNotEmpty
+                      ? GestureDetector(
+                          onDoubleTap: () => _showFullScreenImage(context, _controller.text),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              _controller.text,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => const Center(child: Text(AppStringConstants.errorMssg)),
                             ),
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
               ),
             ),
@@ -91,30 +88,15 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: controller,
+                    controller: _controller,
                     decoration: const InputDecoration(hintText: AppStringConstants.imageUrl),
-                    onChanged: (value) {
-                      setState(() {
-                        buttonDisabled = value.isEmpty;
-                        if (!buttonDisabled) {
-                          showImage = false;
-                        }
-                        log('---$buttonDisabled');
-                      });
-                    },
+                    onChanged: _onTextChanged,
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: buttonDisabled
-                      ? null
-                      : () {
-                          setState(() {
-                            showImage = true;
-                            log('ElevatedButton---$buttonDisabled');
-                          });
-                        },
+                  onPressed: _buttonDisabled ? null : _onImageButtonPressed,
                   child: const Padding(
-                    padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                    padding: EdgeInsets.symmetric(vertical: 12),
                     child: Icon(Icons.arrow_forward),
                   ),
                 ),
@@ -124,52 +106,58 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: showImage
-          ? Stack(
+      floatingActionButton: _showImage ? _buildFloatingMenu() : const SizedBox.shrink(),
+    );
+  }
+
+  /// Builds the floating action menu for fullscreen options.
+  Widget _buildFloatingMenu() {
+    return Stack(
+      children: [
+        if (_isMenuOpen)
+          GestureDetector(
+            onTap: () => setState(() => _isMenuOpen = false),
+            child: Container(
+              color: Colors.black.withOpacity(0.5),
+              width: double.infinity,
+              height: double.infinity,
+            ),
+          ),
+        Positioned(
+          bottom: 80,
+          right: 16,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 200),
+            opacity: _isMenuOpen ? 1.0 : 0.0,
+            child: Column(
               children: [
-                if (isMenuOpen)
-                  GestureDetector(
-                    onTap: () => setState(() => isMenuOpen = false),
-                    child: Container(
-                      color: Colors.black.withOpacity(0.5),
-                      width: double.infinity,
-                      height: double.infinity,
-                    ),
-                  ),
-                Positioned(
-                  bottom: 80,
-                  right: 16,
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 200),
-                    opacity: isMenuOpen ? 1.0 : 0.0,
-                    child: Column(
-                      children: [
-                        FloatingActionButton.extended(
-                          onPressed: enterFullScreen,
-                          icon: const Icon(Icons.fullscreen),
-                          label: const Text(AppStringConstants.enterFullscreen),
-                        ),
-                        const SizedBox(height: 8),
-                        FloatingActionButton.extended(
-                          onPressed: exitFullScreen,
-                          icon: const Icon(Icons.fullscreen_exit),
-                          label: const Text(AppStringConstants.exitFullscreen),
-                        ),
-                      ],
-                    ),
-                  ),
+                FloatingActionButton.extended(
+                  heroTag: 'tag1',
+                  onPressed: () => _showFullScreenImage(context, _controller.text),
+                  icon: const Icon(Icons.fullscreen),
+                  label: const Text(AppStringConstants.enterFullscreen),
                 ),
-                Positioned(
-                  bottom: 16,
-                  right: 16,
-                  child: FloatingActionButton(
-                    onPressed: () => setState(() => isMenuOpen = !isMenuOpen),
-                    child: const Icon(Icons.add),
-                  ),
+                const SizedBox(height: 8),
+                FloatingActionButton.extended(
+                  heroTag: 'tag2',
+                  onPressed: _exitFullScreen,
+                  icon: const Icon(Icons.fullscreen_exit),
+                  label: const Text(AppStringConstants.exitFullscreen),
                 ),
               ],
-            )
-          : const SizedBox.shrink(),
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: FloatingActionButton(
+            heroTag: 'tag3',
+            onPressed: () => setState(() => _isMenuOpen = !_isMenuOpen),
+            child: const Icon(Icons.add),
+          ),
+        ),
+      ],
     );
   }
 }
