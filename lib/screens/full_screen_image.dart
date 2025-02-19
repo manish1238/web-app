@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'dart:html' as html;
 
 import 'home_page.dart';
@@ -10,7 +11,6 @@ import '../constants/strings_constants.dart';
 /// Full-Screen Image Widget
 class FullScreenImage extends StatefulWidget {
   final String imageUrl;
-
   const FullScreenImage({super.key, required this.imageUrl});
 
   @override
@@ -35,7 +35,7 @@ class _FullScreenImageState extends State<FullScreenImage> {
           widget.imageUrl,
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) {
-            return const Center(child: Text("Invalid Image URL"));
+            return const Center(child: Text(AppStringConstants.invalidImageUrl));
           },
         ),
       ),

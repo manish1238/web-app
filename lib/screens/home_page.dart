@@ -6,8 +6,9 @@ import 'dart:html' as html;
 import 'package:get/get.dart';
 
 import '../constants/strings_constants.dart';
+import '../constants/sized_box_hw.dart';
 import '../constants/color.dart';
-import 'full_screen.dart';
+import 'full_screen_image.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,8 +22,6 @@ class _HomePageState extends State<HomePage> {
   bool _buttonDisabled = true;
   bool _showImage = false;
   bool _isMenuOpen = false;
-
-  /// Enters full-screen mode and closes the menu.
 
   /// Exits full-screen mode and closes the menu.
   void _exitFullScreen() {
@@ -44,11 +43,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Handles the image display when the button is pressed.
-  void _onImageButtonPressed() {
-    setState(() {
-      _showImage = true;
-    });
-  }
+  void _onImageButtonPressed() => setState(() => _showImage = true);
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            hb8,
             Row(
               children: [
                 Expanded(
@@ -102,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 64),
+            hb100,
           ],
         ),
       ),
@@ -137,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.fullscreen),
                   label: const Text(AppStringConstants.enterFullscreen),
                 ),
-                const SizedBox(height: 8),
+                hb8,
                 FloatingActionButton.extended(
                   heroTag: 'tag2',
                   onPressed: _exitFullScreen,
